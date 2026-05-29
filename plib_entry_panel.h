@@ -10,8 +10,94 @@
 #define PLIB_ENTRY_PANEL_H
 
 #include <stdint.h>
+#include <stddef.h>
+
+#define PANEL_BUTTON_PULSE_TIMEOUT      1000
+#define PANEL_LED_BLINK_TIMEOUT         500
+
+// to be implemented in external lib
+typedef enum
+{
+    ENTRY_TYPE_PULSE,
+    ENTRY_TYPE_TOGGLE_SIMPLE,
+    ENTRY_TYPE_TOGGLE_DOUBLE,
+    ENTRY_TYPE_RADIO,
+    ENTRY_TYPE_FOLLOW_INPUT,
+}EntryType_t;
+
+typedef struct
+{
+    void (*write_led)(uint16_t led, uint8_t value);
+    void (*write_relay)(uint16_t relay, uint8_t value);
+    void (*set_timer)(uint16_t timer_id, uint16_t value);
+    uint8_t (*timer_finished)(uint16_t timer_id);
+    void (*set_button_enabled)(uint16_t button, uint8_t value);
+    uint8_t (*get_button_enabled)(uint16_t);
+} PanelHW_t;
+
+typedef struct PanelEntry
+{
+    uint8_t id;                 // id of entry (according to array in panel)
+    EntryType_t type;           // type of entry (defines behaviour)
+
+    const uint16_t *buttons;  // list of buttons id
+    uint8_t button_count;       // number of buttons
+
+    const uint16_t *leds;        // list of leds id
+    uint8_t led_count;          // number of leds
+
+    const uint16_t *relays;    // list of relays id
+    uint8_t relay_count;        // number of relays
+
+    uint8_t *state;             // for toggle, radio and select functions
+    uint16_t timer_id;          // if of timer for pulse and blink functions
+    
+    // Blink feature
+    uint16_t blink_led;          // id of led to blink
+    uint8_t blink_enabled;      // led blink enabled
+    uint8_t blink_state;        // state of led blinking
+
+    void (*on_button)(struct PanelEntry *e, uint16_t btn);    // entry function to manage entry event (button pressed)
+    void (*on_update)(struct PanelEntry *e);                    // entry function to manage update of entry event (like a task)
+
+} PanelEntry_t;
+
+void PanelEntries_SetHW(const PanelHW_t *hw);
+
+// Public API for PanelEntries
+void PanelEntries_ManageEntryChange(PanelEntry_t *entries, uint8_t entry_count, uint16_t btn);
+void PanelEntries_Update(PanelEntry_t *entries, uint8_t entry_count);
+void PanelEntries_SetEnabled(PanelEntry_t *entries, uint8_t entry_count, uint8_t state);
+void PanelEntries_SetAllLeds(PanelEntry_t *entries, uint8_t entry_count, uint8_t state);
+void PanelEntries_SetAllRelays(PanelEntry_t *entries, uint8_t entry_count, uint8_t state);
+
+// Public API for PanelEntry
+void PanelEntry_SetEnabled(PanelEntry_t *entry, uint8_t state);
+uint8_t PanelEntry_GetEnabled(PanelEntry_t *entry);
+void PanelEntry_GeneratePulse(PanelEntry_t *entry);
+void PanelEntry_SetToggle1Led(PanelEntry_t *entry, uint8_t state);
+void PanelEntry_SetToggle2Leds(PanelEntry_t *entry, uint8_t state);
+void PanelEntry_SetToggleRadio(PanelEntry_t *entry, uint8_t state);
+void PanelEntry_StartBlink(PanelEntry_t *entry, uint16_t led);
+void PanelEntry_UpdateBlink(PanelEntry_t *entry);
+void PanelEntry_StopBlink(PanelEntry_t *entry);
 
 
+// Functions by entry type
+void PanelEntry_OnPulse(PanelEntry_t *entry, uint16_t btn);
+void PanelEntry_UpdatePulse(PanelEntry_t *entry);
+void PanelEntry_OnToggleSimple(PanelEntry_t *entry, uint16_t btn);
+void PanelEntry_OnToggleDouble(PanelEntry_t *entry, uint16_t btn);
+void PanelEntry_OnRadio(PanelEntry_t *entry, uint16_t btn);
+
+void PanelEntry_WriteLed(const uint16_t led, uint8_t value);
+void PanelEntry_WriteRelay(const uint16_t relay, uint8_t value);
+void PanelEntry_WriteAllLeds(const PanelEntry_t *entry, uint8_t value);
+void PanelEntry_WriteAllRelays(const PanelEntry_t *entry, uint8_t value);
+void PanelEntry_WriteToggle2StateToLeds(const PanelEntry_t *entry, uint8_t state);
+void PanelEntry_WriteToggle2StateToRelay(const PanelEntry_t *entry, uint8_t state);
+void PanelEntry_WriteRadioStateToLeds(const PanelEntry_t *entry, uint8_t state);
+void PanelEntry_WriteRadioStateToRelays(const PanelEntry_t *entry, uint8_t state);
 
 
 
