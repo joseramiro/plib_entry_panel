@@ -39,21 +39,16 @@ typedef struct PanelEntry
 {
     uint8_t id;                 // id of entry (according to array in panel)
     EntryType_t type;           // type of entry (defines behaviour)
-
-    const uint16_t *buttons;  // list of buttons id
+    const PanelHW_t *hw;        // hardware interface functions
+    const uint16_t *buttons;    // list of buttons id
     uint8_t button_count;       // number of buttons
-
-    const uint16_t *leds;        // list of leds id
+    const uint16_t *leds;       // list of leds id
     uint8_t led_count;          // number of leds
-
-    const uint16_t *relays;    // list of relays id
+    const uint16_t *relays;     // list of relays id
     uint8_t relay_count;        // number of relays
-
     uint8_t *state;             // for toggle, radio and select functions
     uint16_t timer_id;          // if of timer for pulse and blink functions
-    
-    // Blink feature
-    uint16_t blink_led;          // id of led to blink
+    uint16_t blink_led;         // id of led to blink
     uint8_t blink_enabled;      // led blink enabled
     uint8_t blink_state;        // state of led blinking
 
@@ -62,7 +57,7 @@ typedef struct PanelEntry
 
 } PanelEntry_t;
 
-void PanelEntries_SetHW(const PanelHW_t *hw);
+void PanelEntries_Init(PanelEntry_t *entries, uint8_t entry_count, const PanelHW_t *hw);
 
 // Public API for PanelEntries
 void PanelEntries_ManageEntryChange(PanelEntry_t *entries, uint8_t entry_count, uint16_t btn);
@@ -78,13 +73,6 @@ void PanelEntry_GeneratePulse(PanelEntry_t *entry);
 void PanelEntry_SetToggle1Led(PanelEntry_t *entry, uint8_t state);
 void PanelEntry_SetToggle2Leds(PanelEntry_t *entry, uint8_t state);
 void PanelEntry_SetToggleRadio(PanelEntry_t *entry, uint8_t state);
-/*
-void PanelEntry_StartBlink(PanelEntry_t *entry, uint16_t led);
-void PanelEntry_UpdateBlink(PanelEntry_t *entry);
-void PanelEntry_StopBlink(PanelEntry_t *entry);
-*/
-
-
 void PanelEntry_OnPulse(PanelEntry_t *entry, uint16_t btn);
 void PanelEntry_UpdatePulse(PanelEntry_t *entry);
 void PanelEntry_OnToggleSimple(PanelEntry_t *entry, uint16_t btn);
