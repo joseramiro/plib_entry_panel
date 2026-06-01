@@ -78,28 +78,17 @@ void PanelEntry_GeneratePulse(PanelEntry_t *entry);
 void PanelEntry_SetToggle1Led(PanelEntry_t *entry, uint8_t state);
 void PanelEntry_SetToggle2Leds(PanelEntry_t *entry, uint8_t state);
 void PanelEntry_SetToggleRadio(PanelEntry_t *entry, uint8_t state);
+/*
 void PanelEntry_StartBlink(PanelEntry_t *entry, uint16_t led);
 void PanelEntry_UpdateBlink(PanelEntry_t *entry);
 void PanelEntry_StopBlink(PanelEntry_t *entry);
+*/
 
 
-// Functions by entry type
 void PanelEntry_OnPulse(PanelEntry_t *entry, uint16_t btn);
 void PanelEntry_UpdatePulse(PanelEntry_t *entry);
 void PanelEntry_OnToggleSimple(PanelEntry_t *entry, uint16_t btn);
 void PanelEntry_OnToggleDouble(PanelEntry_t *entry, uint16_t btn);
 void PanelEntry_OnRadio(PanelEntry_t *entry, uint16_t btn);
-
-void PanelEntry_WriteLed(const uint16_t led, uint8_t value);
-void PanelEntry_WriteRelay(const uint16_t relay, uint8_t value);
-void PanelEntry_WriteAllLeds(const PanelEntry_t *entry, uint8_t value);
-void PanelEntry_WriteAllRelays(const PanelEntry_t *entry, uint8_t value);
-void PanelEntry_WriteToggle2StateToLeds(const PanelEntry_t *entry, uint8_t state);
-void PanelEntry_WriteToggle2StateToRelay(const PanelEntry_t *entry, uint8_t state);
-void PanelEntry_WriteRadioStateToLeds(const PanelEntry_t *entry, uint8_t state);
-void PanelEntry_WriteRadioStateToRelays(const PanelEntry_t *entry, uint8_t state);
-
-
-
 
 #endif  // PLIB_ENTRY_PANEL_H
