@@ -32,7 +32,7 @@ typedef struct
     void (*set_timer)(uint16_t timer_id, uint16_t value);
     uint8_t (*timer_finished)(uint16_t timer_id);
     void (*set_button_enabled)(uint16_t button, uint8_t value);
-    uint8_t (*get_button_enabled)(uint16_t);
+    uint8_t (*get_button_enabled)(uint16_t button);
 } PanelHW_t;
 
 typedef struct PanelEntry
