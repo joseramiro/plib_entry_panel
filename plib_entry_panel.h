@@ -15,16 +15,6 @@
 #define PANEL_BUTTON_PULSE_TIMEOUT      1000
 #define PANEL_LED_BLINK_TIMEOUT         500
 
-// to be implemented in external lib
-typedef enum
-{
-    ENTRY_TYPE_PULSE,
-    ENTRY_TYPE_TOGGLE_SIMPLE,
-    ENTRY_TYPE_TOGGLE_DOUBLE,
-    ENTRY_TYPE_RADIO,
-    ENTRY_TYPE_FOLLOW_INPUT,
-}EntryType_t;
-
 typedef struct
 {
     void (*write_led)(uint16_t led, uint8_t value);
@@ -40,7 +30,7 @@ typedef struct
 typedef struct PanelEntry
 {
     uint8_t id;                 // id of entry (according to array in panel)
-    EntryType_t type;           // type of entry (defines behaviour)
+    uint8_t type;               // type of entry (defines behaviour)
     const PanelHW_t *hw;        // hardware interface functions
     const uint16_t *buttons;    // list of buttons id
     uint8_t button_count;       // number of buttons
@@ -55,19 +45,16 @@ typedef struct PanelEntry
     uint8_t blink_state;        // state of led blinking
 }PanelEntry_t;
 
+// PanelEntry public API
 void PanelEntry_SetHW(PanelEntry_t *entry, const PanelHW_t *hw);
-
-// Public API for PanelEntries
-void PanelEntries_SetEnabled(PanelEntry_t *entries, uint8_t entry_count, uint8_t state);
-
-// Public API for PanelEntry
 void PanelEntry_SetEnabled(PanelEntry_t *entry, uint8_t state);
 uint8_t PanelEntry_GetEnabled(PanelEntry_t *entry);
-void PanelEntry_SetToggle2Leds(PanelEntry_t *entry, uint8_t state);
-void PanelEntry_SetToggleRadio(PanelEntry_t *entry, uint8_t state);
 void PanelEntry_SetAllLedsRelaysOn(PanelEntry_t *entry);
 void PanelEntry_SetAllLedsRelaysOff(PanelEntry_t *entry);
-void PanelEntry_OnToggleDouble(PanelEntry_t *entry, uint16_t btn);
-void PanelEntry_OnRadio(PanelEntry_t *entry, uint16_t btn);
+void PanelEntry_SetToggleDoubleState(PanelEntry_t *entry, uint8_t state);
+void PanelEntry_SetToggleRadioState(PanelEntry_t *entry, uint8_t state);
+
+// PanelEntries public API
+void PanelEntries_SetEnabled(PanelEntry_t *entries, uint8_t entry_count, uint8_t state);
 
 #endif  // PLIB_ENTRY_PANEL_H

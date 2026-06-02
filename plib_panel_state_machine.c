@@ -3,6 +3,9 @@
 // Static functions: conditions
 static uint8_t PanelSM_Cond_None(PanelEntry_t *entry);
 static uint8_t PanelSM_Cond_isButton0Pressed(PanelEntry_t *entry);
+static uint8_t PanelSM_Cond_isButton1Pressed(PanelEntry_t *entry);
+static uint8_t PanelSM_Cond_isButton2Pressed(PanelEntry_t *entry);
+static uint8_t PanelSM_Cond_isButton3Pressed(PanelEntry_t *entry);
 static uint8_t PanelSM_Cond_isTimerFinished(PanelEntry_t *entry);
 
 // Static functions: actions
@@ -10,9 +13,14 @@ static void PanelSM_Action_PulseON(PanelEntry_t *entry);
 static void PanelSM_Action_PulseOFF(PanelEntry_t *entry);
 static void PanelSM_Action_ToggleSimpleON(PanelEntry_t *entry);
 static void PanelSM_Action_ToggleSimpleOFF(PanelEntry_t *entry);
+static void PanelSM_Action_ToggleDoubleOFF(PanelEntry_t *entry);
 static void PanelSM_Action_ToggleDoubleOpt0(PanelEntry_t *entry);
 static void PanelSM_Action_ToggleDoubleOpt1(PanelEntry_t *entry);
-static void PanelSM_Action_ToggleDoubleOFF(PanelEntry_t *entry);
+static void PanelSM_Action_RadioOFF(PanelEntry_t *entry);
+static void PanelSM_Action_RadioOpt0(PanelEntry_t *entry);
+static void PanelSM_Action_RadioOpt1(PanelEntry_t *entry);
+static void PanelSM_Action_RadioOpt2(PanelEntry_t *entry);
+static void PanelSM_Action_RadioOpt3(PanelEntry_t *entry);
 
 const PanelSM_State_t pulseStateTable[] =
 {
@@ -87,6 +95,109 @@ const PanelSM_State_t toggle2StateTable[] =
     },
 };
 
+const PanelSM_State_t radio3StateTable[] =
+{
+    [PANEL_SM_RADIO_IDLE] = {
+        .transitions = (PanelSM_Transition_t[]){
+            {PanelSM_Cond_isButton0Pressed, PANEL_SM_RADIO_OPTION0},
+            {PanelSM_Cond_isButton1Pressed, PANEL_SM_RADIO_OPTION1},
+            {PanelSM_Cond_isButton2Pressed, PANEL_SM_RADIO_OPTION2}
+        },
+        .action = PanelSM_Action_RadioOFF,
+        .numTransitions = 3
+    },
+
+    [PANEL_SM_RADIO_OPTION0] = {
+        .transitions = (PanelSM_Transition_t[]){
+            {PanelSM_Cond_isButton0Pressed, PANEL_SM_RADIO_IDLE},
+            {PanelSM_Cond_isButton1Pressed, PANEL_SM_RADIO_OPTION1},
+            {PanelSM_Cond_isButton2Pressed, PANEL_SM_RADIO_OPTION2}
+        },
+        .action = PanelSM_Action_RadioOpt0,
+        .numTransitions = 3
+    },
+
+    [PANEL_SM_RADIO_OPTION1] = {
+        .transitions = (PanelSM_Transition_t[]){
+            {PanelSM_Cond_isButton0Pressed, PANEL_SM_RADIO_OPTION0},
+            {PanelSM_Cond_isButton1Pressed, PANEL_SM_RADIO_IDLE},
+            {PanelSM_Cond_isButton2Pressed, PANEL_SM_RADIO_OPTION2}
+        },
+        .action = PanelSM_Action_RadioOpt1,
+        .numTransitions = 3
+    },
+
+    [PANEL_SM_RADIO_OPTION2] = {
+        .transitions = (PanelSM_Transition_t[]){
+            {PanelSM_Cond_isButton0Pressed, PANEL_SM_RADIO_OPTION0},
+            {PanelSM_Cond_isButton1Pressed, PANEL_SM_RADIO_OPTION1},
+            {PanelSM_Cond_isButton2Pressed, PANEL_SM_RADIO_IDLE}
+        },
+        .action = PanelSM_Action_RadioOpt2,
+        .numTransitions = 3
+    },
+};
+
+const PanelSM_State_t radio4StateTable[] =
+{
+    [PANEL_SM_RADIO_IDLE] = {
+        .transitions = (PanelSM_Transition_t[]){
+            {PanelSM_Cond_isButton0Pressed, PANEL_SM_RADIO_OPTION0},
+            {PanelSM_Cond_isButton1Pressed, PANEL_SM_RADIO_OPTION1},
+            {PanelSM_Cond_isButton2Pressed, PANEL_SM_RADIO_OPTION2},
+            {PanelSM_Cond_isButton3Pressed, PANEL_SM_RADIO_OPTION3}
+        },
+        .action = PanelSM_Action_RadioOFF,
+        .numTransitions = 4
+    },
+
+    [PANEL_SM_RADIO_OPTION0] = {
+        .transitions = (PanelSM_Transition_t[]){
+            {PanelSM_Cond_isButton0Pressed, PANEL_SM_RADIO_IDLE},
+            {PanelSM_Cond_isButton1Pressed, PANEL_SM_RADIO_OPTION1},
+            {PanelSM_Cond_isButton2Pressed, PANEL_SM_RADIO_OPTION2},
+            {PanelSM_Cond_isButton3Pressed, PANEL_SM_RADIO_OPTION3}
+        },
+        .action = PanelSM_Action_RadioOpt0,
+        .numTransitions = 4
+    },
+
+    [PANEL_SM_RADIO_OPTION1] = {
+        .transitions = (PanelSM_Transition_t[]){
+            {PanelSM_Cond_isButton0Pressed, PANEL_SM_RADIO_OPTION0},
+            {PanelSM_Cond_isButton1Pressed, PANEL_SM_RADIO_IDLE},
+            {PanelSM_Cond_isButton2Pressed, PANEL_SM_RADIO_OPTION2},
+            {PanelSM_Cond_isButton3Pressed, PANEL_SM_RADIO_OPTION3}
+        },
+        .action = PanelSM_Action_RadioOpt1,
+        .numTransitions = 4
+    },
+
+    [PANEL_SM_RADIO_OPTION2] = {
+        .transitions = (PanelSM_Transition_t[]){
+            {PanelSM_Cond_isButton0Pressed, PANEL_SM_RADIO_OPTION0},
+            {PanelSM_Cond_isButton1Pressed, PANEL_SM_RADIO_OPTION1},
+            {PanelSM_Cond_isButton2Pressed, PANEL_SM_RADIO_IDLE},
+            {PanelSM_Cond_isButton3Pressed, PANEL_SM_RADIO_OPTION3}
+        },
+        .action = PanelSM_Action_RadioOpt2,
+        .numTransitions = 4
+    },
+
+    [PANEL_SM_RADIO_OPTION3] = {
+        .transitions = (PanelSM_Transition_t[]){
+            {PanelSM_Cond_isButton0Pressed, PANEL_SM_RADIO_OPTION0},
+            {PanelSM_Cond_isButton1Pressed, PANEL_SM_RADIO_OPTION1},
+            {PanelSM_Cond_isButton2Pressed, PANEL_SM_RADIO_OPTION2},
+            {PanelSM_Cond_isButton3Pressed, PANEL_SM_RADIO_IDLE}
+        },
+        .action = PanelSM_Action_RadioOpt3,
+        .numTransitions = 4
+    },
+};
+
+
+
 
 
 // Public API
@@ -98,12 +209,20 @@ void SM_InitPanelEntry(PanelStateMachine_t *sm)
             sm->states = pulseStateTable;
             break;
         
-        case PANEL_SM_TYPE_TOGGLE_SIMPLE:
+        case PANEL_SM_TYPE_TOGGLE1:
             sm->states = toggle1StateTable;
             break;
         
-        case PANEL_SM_TYPE_TOGGLE_DOUBLE:
+        case PANEL_SM_TYPE_TOGGLE2:
             sm->states = toggle2StateTable;
+            break;
+        
+        case PANEL_SM_TYPE_RADIO3:
+            sm->states = radio3StateTable;
+            break;
+        
+        case PANEL_SM_TYPE_RADIO4:
+            sm->states = radio4StateTable;
             break;
     
         default:
@@ -153,6 +272,21 @@ static uint8_t PanelSM_Cond_isButton0Pressed(PanelEntry_t *entry)
     return(entry->hw->get_button_pressed_flag(entry->buttons[0]));
 }
 
+static uint8_t PanelSM_Cond_isButton1Pressed(PanelEntry_t *entry)
+{
+    return(entry->hw->get_button_pressed_flag(entry->buttons[1]));
+}
+
+static uint8_t PanelSM_Cond_isButton2Pressed(PanelEntry_t *entry)
+{
+    return(entry->hw->get_button_pressed_flag(entry->buttons[2]));
+}
+
+static uint8_t PanelSM_Cond_isButton3Pressed(PanelEntry_t *entry)
+{
+    return(entry->hw->get_button_pressed_flag(entry->buttons[3]));
+}
+
 static uint8_t PanelSM_Cond_isTimerFinished(PanelEntry_t *entry)
 {
     return(entry->hw->timer_finished(entry->timer_id));
@@ -183,20 +317,55 @@ static void PanelSM_Action_ToggleSimpleOFF(PanelEntry_t *entry)
     entry->hw->set_button_pressed_flag(entry->buttons[0], 0);
 }
 
+static void PanelSM_Action_ToggleDoubleOFF(PanelEntry_t *entry)
+{
+    PanelEntry_SetToggleDoubleState(entry, 0);
+    entry->hw->set_button_pressed_flag(entry->buttons[0], 0);
+}
+
 static void PanelSM_Action_ToggleDoubleOpt0(PanelEntry_t *entry)
 {
-    PanelEntry_SetToggle2Leds(entry, 1);
+    PanelEntry_SetToggleDoubleState(entry, 1);
     entry->hw->set_button_pressed_flag(entry->buttons[0], 0);
 }
 
 static void PanelSM_Action_ToggleDoubleOpt1(PanelEntry_t *entry)
 {
-    PanelEntry_SetToggle2Leds(entry, 2);
+    PanelEntry_SetToggleDoubleState(entry, 2);
     entry->hw->set_button_pressed_flag(entry->buttons[0], 0);
 }
 
-static void PanelSM_Action_ToggleDoubleOFF(PanelEntry_t *entry)
+static void PanelSM_Action_RadioOFF(PanelEntry_t *entry)
 {
-    PanelEntry_SetToggle2Leds(entry, 0);
-    entry->hw->set_button_pressed_flag(entry->buttons[0], 0);
+    PanelEntry_SetToggleRadioState(entry, 0);
+    for(uint8_t i = 0; i < entry->button_count; i++)
+        entry->hw->set_button_pressed_flag(entry->buttons[i], 0);
+}
+
+static void PanelSM_Action_RadioOpt0(PanelEntry_t *entry)
+{
+    PanelEntry_SetToggleRadioState(entry, 1);
+    for(uint8_t i = 0; i < entry->button_count; i++)
+        entry->hw->set_button_pressed_flag(entry->buttons[i], 0);
+}
+
+static void PanelSM_Action_RadioOpt1(PanelEntry_t *entry)
+{
+    PanelEntry_SetToggleRadioState(entry, 2);
+    for(uint8_t i = 0; i < entry->button_count; i++)
+        entry->hw->set_button_pressed_flag(entry->buttons[i], 0);
+}
+
+static void PanelSM_Action_RadioOpt2(PanelEntry_t *entry)
+{
+    PanelEntry_SetToggleRadioState(entry, 3);
+    for(uint8_t i = 0; i < entry->button_count; i++)
+        entry->hw->set_button_pressed_flag(entry->buttons[i], 0);
+}
+
+static void PanelSM_Action_RadioOpt3(PanelEntry_t *entry)
+{
+    PanelEntry_SetToggleRadioState(entry, 4);
+    for(uint8_t i = 0; i < entry->button_count; i++)
+        entry->hw->set_button_pressed_flag(entry->buttons[i], 0);
 }

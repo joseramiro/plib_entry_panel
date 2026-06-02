@@ -6,8 +6,10 @@
 typedef enum
 {
     PANEL_SM_TYPE_PULSE,
-    PANEL_SM_TYPE_TOGGLE_SIMPLE,
-    PANEL_SM_TYPE_TOGGLE_DOUBLE,
+    PANEL_SM_TYPE_TOGGLE1,
+    PANEL_SM_TYPE_TOGGLE2,
+    PANEL_SM_TYPE_RADIO3,
+    PANEL_SM_TYPE_RADIO4
 }PanelSMType_t;
 
 typedef enum
@@ -29,6 +31,15 @@ typedef enum
     PANEL_SM_TOGGLE2_OPTION0,
     PANEL_SM_TOGGLE2_OPTION1,
 }PanelSMToggleDouble_t;
+
+typedef enum
+{
+    PANEL_SM_RADIO_IDLE,
+    PANEL_SM_RADIO_OPTION0,
+    PANEL_SM_RADIO_OPTION1,
+    PANEL_SM_RADIO_OPTION2,
+    PANEL_SM_RADIO_OPTION3
+}PanelSMRadio_t;
 
 typedef uint8_t (*PanelSM_CondFunc)(PanelEntry_t *entry);
 typedef void (*PanelSM_ActionFunc)(PanelEntry_t *entry);
