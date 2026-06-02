@@ -6,6 +6,7 @@
 typedef enum
 {
     PANEL_SM_TYPE_PULSE,
+    PANEL_SM_TYPE_FOLLOW,
     PANEL_SM_TYPE_TOGGLE1,
     PANEL_SM_TYPE_TOGGLE2,
     PANEL_SM_TYPE_RADIO3,
@@ -18,6 +19,13 @@ typedef enum
     PANEL_SM_PULSE_ON,
     PANEL_SM_PULSE_OFF,
 }PanelSMPulse_t;
+
+typedef enum
+{
+    PANEL_SM_FOLLOW_IDLE,
+    PANEL_SM_FOLLOW_ON,
+    PANEL_SM_FOLLOW_OFF,
+}PanelSMFollow_t;
 
 typedef enum
 {

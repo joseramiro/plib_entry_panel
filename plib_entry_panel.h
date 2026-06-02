@@ -25,6 +25,8 @@ typedef struct
     uint8_t (*get_button_enabled)(uint16_t button);
     void (*set_button_pressed_flag)(uint16_t button, uint8_t value);
     uint8_t (*get_button_pressed_flag)(uint16_t button);
+    void (*set_button_released_flag)(uint16_t button, uint8_t value);
+    uint8_t (*get_button_released_flag)(uint16_t button);
 } PanelHW_t;
 
 typedef struct PanelEntry
