@@ -7,6 +7,7 @@
  */
 
 #include "plib_entry_panel.h"
+#include "libs/common_c_libs/plib_data_struct.h"
 
 // Static gpio functions
 static void PanelEntry_WriteLed(const PanelEntry_t *entry, const uint16_t led, uint8_t value);
@@ -19,62 +20,12 @@ static void PanelEntry_WriteStateToToggle2Relays(const PanelEntry_t *entry, uint
 static void PanelEntry_WriteStateToRadioRelays(const PanelEntry_t *entry, uint8_t state);
 
 // Public API
-void PanelEntries_Init(PanelEntry_t *entries, uint8_t entry_count, const PanelHW_t *hw)
+void PanelEntry_SetHW(PanelEntry_t *entry, const PanelHW_t *hw)
 {
-    for(uint8_t i = 0; i < entry_count; i++)
-        entries[i].hw = hw;
+    entry->hw = hw;
 }
 
 // Public API for PanelEntries
-void PanelEntries_ManageEntryChange(PanelEntry_t *entries, uint8_t entry_count, uint16_t btn)
-{
-    //if(g_panelHW == NULL)
-    //    return;
-    
-    for (uint8_t i = 0; i < entry_count; i++)
-    {
-        PanelEntry_t *entry = &entries[i];
-        
-        if (!PanelEntry_GetEnabled(entry) || !entry->on_button)
-            continue;
-
-        for (uint8_t b = 0; b < entry->button_count; b++)
-        {
-            if (entry->buttons[b] == btn)
-            {
-                entry->on_button(entry, btn);
-                return;
-            }
-        }
-    }
-}
-
-void PanelEntries_Update(PanelEntry_t *entries, uint8_t entry_count)
-{
-    //if(g_panelHW == NULL)
-    //    return;
-
-    for (uint8_t i = 0; i < entry_count; i++)
-    {
-        PanelEntry_t *entry = &entries[i];
-
-        // Blink feature
-        /*
-        if (entry->blink_enabled && g_panelHW->timer_finished(entry->timer_id))
-        {
-           PanelEntry_UpdateBlink(entry);
-        }
-        */
-        
-        if (!PanelEntry_GetEnabled(entry))
-            continue;
-
-        // Normal entry update
-        if (entry->on_update)
-            entry->on_update(entry);
-    }
-}
-
 void PanelEntries_SetEnabled(PanelEntry_t *entries, uint8_t entry_count, uint8_t state)
 {
     for(uint8_t i = 0; i < entry_count; i++)
@@ -118,11 +69,6 @@ uint8_t PanelEntry_GetEnabled(PanelEntry_t *entry)
     return 0;
 }
 
-void PanelEntry_GeneratePulse(PanelEntry_t *entry)
-{
-    PanelEntry_OnPulse(entry, 0);   // button param is unused
-}
-
 void PanelEntry_SetToggle1Led(PanelEntry_t *entry, uint8_t state)
 {
     if(entry->state == NULL || entry->led_count == 0)
@@ -154,31 +100,18 @@ void PanelEntry_SetToggleRadio(PanelEntry_t *entry, uint8_t state)
 }
 
 // Functions by entry type
-void PanelEntry_OnPulse(PanelEntry_t *entry, uint16_t btn)
+void PanelEntry_PulseOn(PanelEntry_t *entry)
 {
-    
-    if(entry->hw->set_timer)
-    {
-        *entry->state = 1;
-        PanelEntry_WriteAllLeds(entry, 1);
-        PanelEntry_WriteAllRelays(entry, 1);
-        entry->hw->set_timer(entry->timer_id, PANEL_BUTTON_PULSE_TIMEOUT);
-    }
-    
+    *entry->state = 1;
+    PanelEntry_WriteAllLeds(entry, 1);
+    PanelEntry_WriteAllRelays(entry, 1);
 }
 
-void PanelEntry_UpdatePulse(PanelEntry_t *entry)
+void PanelEntry_PulseOff(PanelEntry_t *entry)
 {
-    if(entry->hw->timer_finished)
-    {
-        if(entry->hw->timer_finished(entry->timer_id) && entry->state)
-        {
-            *entry->state = 0;
-            PanelEntry_WriteAllLeds(entry, 0);
-            PanelEntry_WriteAllRelays(entry, 0);
-        }
-    }
-    
+    *entry->state = 0;
+    PanelEntry_WriteAllLeds(entry, 0);
+    PanelEntry_WriteAllRelays(entry, 0);
 }
 
 void PanelEntry_OnToggleSimple(PanelEntry_t *entry, uint16_t btn)
@@ -219,15 +152,7 @@ void PanelEntry_OnRadio(PanelEntry_t *entry, uint16_t btn)
     }
 }
 
-
-
-
-
-
-
-
-
-// Statis functions
+// Static functions
 
 static void PanelEntry_WriteLed(const PanelEntry_t *entry, const uint16_t led, uint8_t value)
 {

@@ -33,6 +33,8 @@ typedef struct
     uint8_t (*timer_finished)(uint16_t timer_id);
     void (*set_button_enabled)(uint16_t button, uint8_t value);
     uint8_t (*get_button_enabled)(uint16_t button);
+    void (*set_button_pressed_flag)(uint16_t button, uint8_t value);
+    uint8_t (*get_button_pressed_flag)(uint16_t button);
 } PanelHW_t;
 
 typedef struct PanelEntry
@@ -51,17 +53,11 @@ typedef struct PanelEntry
     uint16_t blink_led;         // id of led to blink
     uint8_t blink_enabled;      // led blink enabled
     uint8_t blink_state;        // state of led blinking
+}PanelEntry_t;
 
-    void (*on_button)(struct PanelEntry *e, uint16_t btn);    // entry function to manage entry event (button pressed)
-    void (*on_update)(struct PanelEntry *e);                    // entry function to manage update of entry event (like a task)
-
-} PanelEntry_t;
-
-void PanelEntries_Init(PanelEntry_t *entries, uint8_t entry_count, const PanelHW_t *hw);
+void PanelEntry_SetHW(PanelEntry_t *entry, const PanelHW_t *hw);
 
 // Public API for PanelEntries
-void PanelEntries_ManageEntryChange(PanelEntry_t *entries, uint8_t entry_count, uint16_t btn);
-void PanelEntries_Update(PanelEntry_t *entries, uint8_t entry_count);
 void PanelEntries_SetEnabled(PanelEntry_t *entries, uint8_t entry_count, uint8_t state);
 void PanelEntries_SetAllLeds(PanelEntry_t *entries, uint8_t entry_count, uint8_t state);
 void PanelEntries_SetAllRelays(PanelEntry_t *entries, uint8_t entry_count, uint8_t state);
@@ -69,12 +65,11 @@ void PanelEntries_SetAllRelays(PanelEntry_t *entries, uint8_t entry_count, uint8
 // Public API for PanelEntry
 void PanelEntry_SetEnabled(PanelEntry_t *entry, uint8_t state);
 uint8_t PanelEntry_GetEnabled(PanelEntry_t *entry);
-void PanelEntry_GeneratePulse(PanelEntry_t *entry);
 void PanelEntry_SetToggle1Led(PanelEntry_t *entry, uint8_t state);
 void PanelEntry_SetToggle2Leds(PanelEntry_t *entry, uint8_t state);
 void PanelEntry_SetToggleRadio(PanelEntry_t *entry, uint8_t state);
-void PanelEntry_OnPulse(PanelEntry_t *entry, uint16_t btn);
-void PanelEntry_UpdatePulse(PanelEntry_t *entry);
+void PanelEntry_PulseOn(PanelEntry_t *entry);
+void PanelEntry_PulseOff(PanelEntry_t *entry);
 void PanelEntry_OnToggleSimple(PanelEntry_t *entry, uint16_t btn);
 void PanelEntry_OnToggleDouble(PanelEntry_t *entry, uint16_t btn);
 void PanelEntry_OnRadio(PanelEntry_t *entry, uint16_t btn);
