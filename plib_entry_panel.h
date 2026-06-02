@@ -59,18 +59,14 @@ void PanelEntry_SetHW(PanelEntry_t *entry, const PanelHW_t *hw);
 
 // Public API for PanelEntries
 void PanelEntries_SetEnabled(PanelEntry_t *entries, uint8_t entry_count, uint8_t state);
-void PanelEntries_SetAllLeds(PanelEntry_t *entries, uint8_t entry_count, uint8_t state);
-void PanelEntries_SetAllRelays(PanelEntry_t *entries, uint8_t entry_count, uint8_t state);
 
 // Public API for PanelEntry
 void PanelEntry_SetEnabled(PanelEntry_t *entry, uint8_t state);
 uint8_t PanelEntry_GetEnabled(PanelEntry_t *entry);
-void PanelEntry_SetToggle1Led(PanelEntry_t *entry, uint8_t state);
 void PanelEntry_SetToggle2Leds(PanelEntry_t *entry, uint8_t state);
 void PanelEntry_SetToggleRadio(PanelEntry_t *entry, uint8_t state);
-void PanelEntry_PulseOn(PanelEntry_t *entry);
-void PanelEntry_PulseOff(PanelEntry_t *entry);
-void PanelEntry_OnToggleSimple(PanelEntry_t *entry, uint16_t btn);
+void PanelEntry_SetAllLedsRelaysOn(PanelEntry_t *entry);
+void PanelEntry_SetAllLedsRelaysOff(PanelEntry_t *entry);
 void PanelEntry_OnToggleDouble(PanelEntry_t *entry, uint16_t btn);
 void PanelEntry_OnRadio(PanelEntry_t *entry, uint16_t btn);
 
