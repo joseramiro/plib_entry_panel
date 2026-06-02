@@ -45,10 +45,13 @@ typedef struct PanelEntry
     uint16_t blink_led;         // id of led to blink
     uint8_t blink_enabled;      // led blink enabled
     uint8_t blink_state;        // state of led blinking
+    uint8_t validation;
 }PanelEntry_t;
 
 // PanelEntry public API
 void PanelEntry_SetHW(PanelEntry_t *entry, const PanelHW_t *hw);
+void PanelEntry_SetValidation(PanelEntry_t *entry, uint8_t state);
+uint8_t PanelEntry_GetValidation(PanelEntry_t *entry);
 void PanelEntry_SetEnabled(PanelEntry_t *entry, uint8_t state);
 uint8_t PanelEntry_GetEnabled(PanelEntry_t *entry);
 void PanelEntry_SetAllLedsRelaysOn(PanelEntry_t *entry);

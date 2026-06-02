@@ -23,6 +23,16 @@ void PanelEntry_SetHW(PanelEntry_t *entry, const PanelHW_t *hw)
     entry->hw = hw;
 }
 
+void PanelEntry_SetValidation(PanelEntry_t *entry, uint8_t state)
+{
+    entry->validation = state;
+}
+
+uint8_t PanelEntry_GetValidation(PanelEntry_t *entry)
+{
+    return entry->validation;
+}
+
 void PanelEntry_SetEnabled(PanelEntry_t *entry, uint8_t state)
 {
     if(entry->hw->set_button_enabled)

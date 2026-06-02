@@ -2,6 +2,7 @@
 
 // Static functions: conditions
 static uint8_t PanelSM_Cond_None(PanelEntry_t *entry);
+static uint8_t PanelSM_Cond_isValidated(PanelEntry_t *entry);
 static uint8_t PanelSM_Cond_isButton0Pressed(PanelEntry_t *entry);
 static uint8_t PanelSM_Cond_isButton1Pressed(PanelEntry_t *entry);
 static uint8_t PanelSM_Cond_isButton2Pressed(PanelEntry_t *entry);
@@ -12,6 +13,9 @@ static uint8_t PanelSM_Cond_isTimerFinished(PanelEntry_t *entry);
 // Static functions: actions
 static void PanelSM_Action_PulseON(PanelEntry_t *entry);
 static void PanelSM_Action_PulseOFF(PanelEntry_t *entry);
+static void PanelMS_Action_DiffPulseON(PanelEntry_t *entry);
+static void PanelMS_Action_DiffPulseOFF(PanelEntry_t *entry);
+
 static void PanelSM_Action_FollowON(PanelEntry_t *entry);
 static void PanelSM_Action_FollowOFF(PanelEntry_t *entry);
 static void PanelSM_Action_ToggleSimpleON(PanelEntry_t *entry);
@@ -48,6 +52,41 @@ const PanelSM_State_t pulseStateTable[] =
             {PanelSM_Cond_None, PANEL_SM_PULSE_IDLE}
         },
         .action = PanelSM_Action_PulseOFF,
+        .numTransitions = 1
+    }
+};
+
+const PanelSM_State_t diffPulseStateTable[] =
+{
+    [PANEL_SM_DIFF_PULSE_IDLE] = {
+        .transitions = (PanelSM_Transition_t[]){
+            {PanelSM_Cond_isButton0Pressed, PANEL_SM_DIFF_PULSE_WAIT_VALID}
+        },
+        .action = NULL,
+        .numTransitions = 1
+    },
+
+    [PANEL_SM_DIFF_PULSE_WAIT_VALID] = {
+        .transitions = (PanelSM_Transition_t[]){
+            {PanelSM_Cond_isValidated, PANEL_SM_DIFF_PULSE_ON}
+        },
+        .action = NULL,
+        .numTransitions = 1
+    },
+
+    [PANEL_SM_DIFF_PULSE_ON] = {
+        .transitions = (PanelSM_Transition_t[]){
+            {PanelSM_Cond_isTimerFinished, PANEL_SM_DIFF_PULSE_OFF}
+        },
+        .action = PanelMS_Action_DiffPulseON,
+        .numTransitions = 1
+    },
+
+    [PANEL_SM_DIFF_PULSE_OFF] = {
+        .transitions = (PanelSM_Transition_t[]){
+            {PanelSM_Cond_None, PANEL_SM_DIFF_PULSE_IDLE}
+        },
+        .action = PanelMS_Action_DiffPulseOFF,
         .numTransitions = 1
     }
 };
@@ -227,9 +266,6 @@ const PanelSM_State_t radio4StateTable[] =
 };
 
 
-
-
-
 // Public API
 void SM_InitPanelEntry(PanelStateMachine_t *sm)
 {
@@ -237,6 +273,10 @@ void SM_InitPanelEntry(PanelStateMachine_t *sm)
     {
         case PANEL_SM_TYPE_PULSE:
             sm->states = pulseStateTable;
+            break;
+        
+        case PANEL_SM_TYPE_DIFF_PULSE:
+            sm->states = diffPulseStateTable;
             break;
         
         case PANEL_SM_TYPE_FOLLOW:
@@ -301,6 +341,11 @@ static uint8_t PanelSM_Cond_None(PanelEntry_t *entry)
     return 1;
 }
 
+static uint8_t PanelSM_Cond_isValidated(PanelEntry_t *entry)
+{
+    return PanelEntry_GetValidation(entry);
+}
+
 static uint8_t PanelSM_Cond_isButton0Pressed(PanelEntry_t *entry)
 {
     return(entry->hw->get_button_pressed_flag(entry->buttons[0]));
@@ -341,6 +386,19 @@ static void PanelSM_Action_PulseON(PanelEntry_t *entry)
 static void PanelSM_Action_PulseOFF(PanelEntry_t *entry)
 {
     PanelEntry_SetAllLedsRelaysOff(entry);
+    entry->hw->set_button_pressed_flag(entry->buttons[0], 0);
+}
+
+static void PanelMS_Action_DiffPulseON(PanelEntry_t *entry)
+{
+    PanelEntry_SetAllLedsRelaysOn(entry);
+    entry->hw->set_timer(entry->timer_id, PANEL_BUTTON_PULSE_TIMEOUT);
+}
+
+static void PanelMS_Action_DiffPulseOFF(PanelEntry_t *entry)
+{
+    PanelEntry_SetAllLedsRelaysOff(entry);
+    PanelEntry_SetValidation(entry, 0);
     entry->hw->set_button_pressed_flag(entry->buttons[0], 0);
 }
 
