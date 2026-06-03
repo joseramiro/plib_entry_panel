@@ -2,6 +2,7 @@
 #include "plib_panel_sm_diff_pulse.h"
 
 // Static functions
+static void PanelSM_Action_DiffPulseWait(PanelEntry_t *entry);
 static void PanelMS_Action_DiffPulseON(PanelEntry_t *entry);
 static void PanelMS_Action_DiffPulseOFF(PanelEntry_t *entry);
 
@@ -20,7 +21,7 @@ const PanelSM_State_t diffPulseStateTable[] =
         .transitions = (PanelSM_Transition_t[]){
             {PanelSM_Cond_isValidated, PANEL_SM_DIFF_PULSE_ON}
         },
-        .action = NULL,
+        .action = PanelSM_Action_DiffPulseWait,
         .numTransitions = 1
     },
 
@@ -48,6 +49,11 @@ const PanelSM_State_t* PanelSM_DiffPulse_GetTable()
 }
 
 // Static functions
+static void PanelSM_Action_DiffPulseWait(PanelEntry_t *entry)
+{
+    *entry->state = 1;
+}
+
 static void PanelMS_Action_DiffPulseON(PanelEntry_t *entry)
 {
     PanelEntry_SetAllLedsRelaysOn(entry);
