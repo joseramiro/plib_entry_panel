@@ -46,6 +46,15 @@ void PanelSM_Init(PanelStateMachine_t *sm)
     sm->entryFlag = 1;
 }
 
+void PanelSM_InitList(PanelStateMachine_t *sm, uint8_t count, const PanelHW_t *hw)
+{
+    for(uint8_t i = 0; i < count; i++)
+    {
+        PanelEntry_SetHW(&sm[i].entry, hw);
+        PanelSM_Init(&sm[i]);
+    }
+}
+
 void PanelSM_Run(PanelStateMachine_t *sm)
 {
     const PanelSM_State_t *s = &sm->states[sm->currentState];
@@ -69,10 +78,26 @@ void PanelSM_Run(PanelStateMachine_t *sm)
     }
 }
 
+void PanelSM_RunList(PanelStateMachine_t *sm, uint8_t count)
+{
+    for(uint8_t i = 0; i < count; i++)
+    {
+        PanelSM_Run(&sm[i]);
+    }
+}
+
 void PanelSM_SetState(PanelStateMachine_t *sm, uint8_t state)
 {
     sm->currentState = state;
     sm->entryFlag = 1;
+}
+
+void PanelSM_SetAllEnable(PanelStateMachine_t *sm, uint8_t count, uint8_t state)
+{
+    for(uint8_t i = 0; i < count; i++)
+    {
+        PanelEntry_SetEnabled(&sm[i].entry, state);
+    }
 }
 
 // Condition functions
