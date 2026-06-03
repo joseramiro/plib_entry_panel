@@ -1,5 +1,5 @@
-#ifndef PLIB_PANEL_STATE_MACHINE_H
-#define PLIB_PANEL_STATE_MACHINE_H
+#ifndef PLIB_PANEL_SM_H
+#define PLIB_PANEL_SM_H
 
 #include "plib_entry_panel.h"
 
@@ -80,8 +80,18 @@ typedef struct {
 }PanelStateMachine_t;
 
 // Public API
-void SM_InitPanelEntry(PanelStateMachine_t *sm);
-void SM_RunPanelEntry(PanelStateMachine_t *sm);
-void SM_SetState(PanelStateMachine_t *sm, uint8_t state);
+void PanelSM_Init(PanelStateMachine_t *sm);
+void PanelSM_Run(PanelStateMachine_t *sm);
+void PanelSM_SetState(PanelStateMachine_t *sm, uint8_t state);
 
-#endif
+// Condition functions
+uint8_t PanelSM_Cond_None(PanelEntry_t *entry);
+uint8_t PanelSM_Cond_isValidated(PanelEntry_t *entry);
+uint8_t PanelSM_Cond_isButton0Pressed(PanelEntry_t *entry);
+uint8_t PanelSM_Cond_isButton1Pressed(PanelEntry_t *entry);
+uint8_t PanelSM_Cond_isButton2Pressed(PanelEntry_t *entry);
+uint8_t PanelSM_Cond_isButton3Pressed(PanelEntry_t *entry);
+uint8_t PanelSM_Cond_isButton0Released(PanelEntry_t *entry);
+uint8_t PanelSM_Cond_isTimerFinished(PanelEntry_t *entry);
+
+#endif  // PLIB_PANEL_SM_H
