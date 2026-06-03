@@ -28,6 +28,12 @@ void PanelEntry_SetValidation(PanelEntry_t *entry, uint8_t state)
     entry->validation = state;
 }
 
+void PanelEntry_StartPulse(PanelEntry_t *entry)
+{
+    entry->hw->set_button_pressed_flag(entry->buttons[0], 1);
+    PanelEntry_SetValidation(entry, 1);
+}
+
 uint8_t PanelEntry_GetValidation(PanelEntry_t *entry)
 {
     return entry->validation;
