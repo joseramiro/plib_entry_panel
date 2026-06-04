@@ -30,8 +30,11 @@ void PanelEntry_SetValidation(PanelEntry_t *entry, uint8_t state)
 
 void PanelEntry_StartPulse(PanelEntry_t *entry)
 {
-    entry->hw->set_button_pressed_flag(entry->buttons[0], 1);
-    PanelEntry_SetValidation(entry, 1);
+    if(entry->hw->set_button_pressed_flag && entry->buttons)
+    {
+        entry->hw->set_button_pressed_flag(entry->buttons[0], 1);
+        PanelEntry_SetValidation(entry, 1);
+    }
 }
 
 uint8_t PanelEntry_GetValidation(PanelEntry_t *entry)
@@ -41,7 +44,7 @@ uint8_t PanelEntry_GetValidation(PanelEntry_t *entry)
 
 void PanelEntry_SetEnabled(PanelEntry_t *entry, uint8_t state)
 {
-    if(entry->hw->set_button_enabled)
+    if(entry->hw->set_button_enabled && entry->buttons)
     {
         for(uint8_t i = 0; i < entry->button_count; i++)
             entry->hw->set_button_enabled(entry->buttons[i], state);
@@ -64,61 +67,67 @@ uint8_t PanelEntry_GetEnabled(PanelEntry_t *entry)
 
 void PanelEntry_SetAllLedsRelaysOn(PanelEntry_t *entry)
 {
-    *entry->state = 1;
-    PanelEntry_WriteAllLeds(entry, 1);
-    PanelEntry_WriteAllRelays(entry, 1);
+    if(entry->state)
+    {
+        *entry->state = 1;
+        PanelEntry_WriteAllLeds(entry, 1);
+        PanelEntry_WriteAllRelays(entry, 1);
+    }    
 }
 
 void PanelEntry_SetAllLedsRelaysOff(PanelEntry_t *entry)
 {
-    *entry->state = 0;
-    PanelEntry_WriteAllLeds(entry, 0);
-    PanelEntry_WriteAllRelays(entry, 0);
+    if(entry->state)
+    {
+        *entry->state = 0;
+        PanelEntry_WriteAllLeds(entry, 0);
+        PanelEntry_WriteAllRelays(entry, 0);
+    }
 }
 
 void PanelEntry_SetToggleDoubleState(PanelEntry_t *entry, uint8_t state)
 {
-    if(entry->state == NULL || entry->led_count == 0)
-        return;
-
-    *entry->state = state;
-    
-    switch (state)
+    if(entry->state && entry->leds)
     {
-        // off state
-        case 0:
-            PanelEntry_WriteLed(entry, entry->leds[0], 0);
-            PanelEntry_WriteLed(entry, entry->leds[1], 0);
-            PanelEntry_WriteAllRelays(entry, 0);
-            break;
+        *entry->state = state;
 
-        // option 0 selected
-        case 1:
-            PanelEntry_WriteLed(entry, entry->leds[0], 1);
-            PanelEntry_WriteLed(entry, entry->leds[1], 0);
-            PanelEntry_WriteAllRelays(entry, 0);
-            break;
+        switch (state)
+        {
+            // off state
+            case 0:
+                PanelEntry_WriteLed(entry, entry->leds[0], 0);
+                PanelEntry_WriteLed(entry, entry->leds[1], 0);
+                PanelEntry_WriteAllRelays(entry, 0);
+                break;
 
-        // option 1 selected
-        case 2:
-            PanelEntry_WriteLed(entry, entry->leds[0], 0);
-            PanelEntry_WriteLed(entry, entry->leds[1], 1);
-            PanelEntry_WriteAllRelays(entry, 1);
-            break;
-    
-        default:
-            break;
-    }
+            // option 0 selected
+            case 1:
+                PanelEntry_WriteLed(entry, entry->leds[0], 1);
+                PanelEntry_WriteLed(entry, entry->leds[1], 0);
+                PanelEntry_WriteAllRelays(entry, 0);
+                break;
+
+            // option 1 selected
+            case 2:
+                PanelEntry_WriteLed(entry, entry->leds[0], 0);
+                PanelEntry_WriteLed(entry, entry->leds[1], 1);
+                PanelEntry_WriteAllRelays(entry, 1);
+                break;
+        
+            default:
+                break;
+        }
+    }    
 }
 
 void PanelEntry_SetToggleRadioState(PanelEntry_t *entry, uint8_t state)
 {
-    if(entry->state == NULL || entry->led_count == 0)
-        return;
-
-    *entry->state = state;
-    PanelEntry_WriteRadioStateToLeds(entry, *entry->state);
-    PanelEntry_WriteRadioStateToRelays(entry, *entry->state);
+    if(entry->state && entry->leds)
+    {
+        *entry->state = state;
+        PanelEntry_WriteRadioStateToLeds(entry, *entry->state);
+        PanelEntry_WriteRadioStateToRelays(entry, *entry->state);
+    }
 }
 
 // PanelEntries public API
@@ -129,7 +138,6 @@ void PanelEntries_SetEnabled(PanelEntry_t *entries, uint8_t entry_count, uint8_t
 }
 
 // Static functions
-
 static void PanelEntry_WriteLed(const PanelEntry_t *entry, const uint16_t led, uint8_t value)
 {
     if(entry->hw->write_led)
@@ -138,24 +146,24 @@ static void PanelEntry_WriteLed(const PanelEntry_t *entry, const uint16_t led, u
 
 static void PanelEntry_WriteAllLeds(const PanelEntry_t *entry, uint8_t value)
 {
-    if(entry->leds == NULL)
-        return;
-    // set all leds state
-    for(uint8_t i = 0; i < entry->led_count; i++)
-        PanelEntry_WriteLed(entry, entry->leds[i], value);
+    if(entry->leds)
+    {
+        for(uint8_t i = 0; i < entry->led_count; i++)
+            PanelEntry_WriteLed(entry, entry->leds[i], value);
+    }
 }
 
 static void PanelEntry_WriteRadioStateToLeds(const PanelEntry_t *entry, uint8_t state)
 {
-    if(entry->leds == NULL)
-        return;
-    // set only 1 led from entry according to state
-    if(state == 0)
-        for(uint8_t i = 0; i < entry->led_count; i++)
-            PanelEntry_WriteLed(entry, entry->leds[i], 0);
-    else
-        for(uint8_t i = 0; i < entry->led_count; i++)
-            PanelEntry_WriteLed(entry, entry->leds[i], (i == state -1));
+    if(entry->leds)
+    {
+        if(state == 0)
+            for(uint8_t i = 0; i < entry->led_count; i++)
+                PanelEntry_WriteLed(entry, entry->leds[i], 0);
+        else
+            for(uint8_t i = 0; i < entry->led_count; i++)
+                PanelEntry_WriteLed(entry, entry->leds[i], (i == state -1));
+    }
 }
 
 static void PanelEntry_WriteRelay(const PanelEntry_t *entry, const uint16_t relay, uint8_t value)
@@ -166,22 +174,23 @@ static void PanelEntry_WriteRelay(const PanelEntry_t *entry, const uint16_t rela
 
 static void PanelEntry_WriteAllRelays(const PanelEntry_t *entry, uint8_t value)
 {
-    if(entry->relays == NULL)
-        return;
-    // set all relays state
-    for(uint8_t i = 0; i < entry->relay_count; i++)
-        PanelEntry_WriteRelay(entry, entry->relays[i], value);
+    if(entry->relays)
+    {
+        for(uint8_t i = 0; i < entry->relay_count; i++)
+            PanelEntry_WriteRelay(entry, entry->relays[i], value);
+    }
 }
 
 static void PanelEntry_WriteRadioStateToRelays(const PanelEntry_t *entry, uint8_t state)
 {
-    if(entry->relays == NULL)
+    if(entry->relays)
+    {
+        if(state == 0)
+            for(uint8_t i = 0; i < entry->relay_count; i++)
+                PanelEntry_WriteRelay(entry, entry->relays[i], 0);
+        else
+            for(uint8_t i = 0; i < entry->relay_count; i++)
+                PanelEntry_WriteRelay(entry, entry->relays[i], (i == state -1));
+    }
         return;
-    // set only 1 relay from entry according to state
-    if(state == 0)
-        for(uint8_t i = 0; i < entry->relay_count; i++)
-            PanelEntry_WriteRelay(entry, entry->relays[i], 0);
-    else
-        for(uint8_t i = 0; i < entry->relay_count; i++)
-            PanelEntry_WriteRelay(entry, entry->relays[i], (i == state -1));
 }

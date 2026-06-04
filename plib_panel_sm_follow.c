@@ -42,6 +42,8 @@ const PanelSM_State_t* PanelSM_Follow_GetTable()
 // Static functions
 static void PanelSM_Action_FollowON(PanelEntry_t *entry)
 {
+    if(entry->state == NULL || entry->buttons == NULL)
+        return;
     PanelEntry_SetAllLedsRelaysOn(entry);
     *entry->state = 1;
     entry->hw->set_button_pressed_flag(entry->buttons[0], 0);
@@ -49,6 +51,8 @@ static void PanelSM_Action_FollowON(PanelEntry_t *entry)
 
 static void PanelSM_Action_FollowOFF(PanelEntry_t *entry)
 {
+    if(entry->state == NULL || entry->buttons == NULL)
+        return;
     PanelEntry_SetAllLedsRelaysOff(entry);
     *entry->state = 0;
     entry->hw->set_button_released_flag(entry->buttons[0], 0);
