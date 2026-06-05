@@ -23,7 +23,7 @@ void PanelEntry_SetHW(PanelEntry_t *entry, const PanelHW_t *hw)
     entry->hw = hw;
 }
 
-void PanelEntry_SetValidation(PanelEntry_t *entry, uint8_t state)
+void PanelEntry_SetValidation(PanelEntry_t *entry, const uint8_t state)
 {
     entry->validation = state;
 }
@@ -42,7 +42,7 @@ uint8_t PanelEntry_GetValidation(const PanelEntry_t *entry)
     return entry->validation;
 }
 
-void PanelEntry_SetEnabled(PanelEntry_t *entry, uint8_t state)
+void PanelEntry_SetEnabled(PanelEntry_t *entry, const uint8_t state)
 {
     if(entry->hw && entry->hw->set_button_enabled && entry->buttons && entry->button_count > 0)
     {
@@ -85,7 +85,7 @@ void PanelEntry_SetAllLedsRelaysOff(PanelEntry_t *entry)
     }
 }
 
-void PanelEntry_SetToggleDoubleState(PanelEntry_t *entry, uint8_t state)
+void PanelEntry_SetToggleDoubleState(PanelEntry_t *entry, const uint8_t state)
 {
     if(entry->state && entry->leds && entry->led_count >= 2)
     {
@@ -124,7 +124,7 @@ void PanelEntry_SetToggleDoubleState(PanelEntry_t *entry, uint8_t state)
     }    
 }
 
-void PanelEntry_SetToggleRadioState(PanelEntry_t *entry, uint8_t state)
+void PanelEntry_SetToggleRadioState(PanelEntry_t *entry, const uint8_t state)
 {
     if(entry->state && entry->leds && entry->led_count > 0)
     {
@@ -135,7 +135,7 @@ void PanelEntry_SetToggleRadioState(PanelEntry_t *entry, uint8_t state)
 }
 
 // PanelEntries public API
-void PanelEntries_SetEnabled(PanelEntry_t *entries, uint8_t entry_count, uint8_t state)
+void PanelEntries_SetEnabled(PanelEntry_t *entries, const uint8_t entry_count, const uint8_t state)
 {
     for(uint8_t i = 0; i < entry_count; i++)
         PanelEntry_SetEnabled(&entries[i], state);

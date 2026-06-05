@@ -31,36 +31,36 @@ typedef struct
 
 typedef struct PanelEntry
 {
-    uint8_t id;                 // id of entry (according to array in panel)
-    uint8_t type;               // type of entry (defines behaviour)
+    const uint8_t id;           // id of entry (according to array in panel)
+    const uint8_t type;         // type of entry (defines behaviour)
     const PanelHW_t *hw;        // hardware interface functions
     const uint16_t *buttons;    // list of buttons id
-    uint8_t button_count;       // number of buttons
+    const uint8_t button_count; // number of buttons
     const uint16_t *leds;       // list of leds id
-    uint8_t led_count;          // number of leds
+    const uint8_t led_count;    // number of leds
     const uint16_t *relays;     // list of relays id
-    uint8_t relay_count;        // number of relays
+    const uint8_t relay_count;  // number of relays
     uint8_t *state;             // for toggle, radio and select functions
-    uint16_t timer_id;          // if of timer for pulse and blink functions
+    const uint16_t timer_id;    // if of timer for pulse and blink functions
     uint16_t blink_led;         // id of led to blink
     uint8_t blink_enabled;      // led blink enabled
     uint8_t blink_state;        // state of led blinking
-    uint8_t validation;
+    uint8_t validation;         // flag to start in differed mode
 }PanelEntry_t;
 
 // PanelEntry public API
 void PanelEntry_SetHW(PanelEntry_t *entry, const PanelHW_t *hw);
-void PanelEntry_SetValidation(PanelEntry_t *entry, uint8_t state);
+void PanelEntry_SetValidation(PanelEntry_t *entry, const uint8_t state);
 void PanelEntry_StartPulse(PanelEntry_t *entry);
 uint8_t PanelEntry_GetValidation(const PanelEntry_t *entry);
-void PanelEntry_SetEnabled(PanelEntry_t *entry, uint8_t state);
+void PanelEntry_SetEnabled(PanelEntry_t *entry, const uint8_t state);
 uint8_t PanelEntry_GetEnabled(const PanelEntry_t *entry);
 void PanelEntry_SetAllLedsRelaysOn(PanelEntry_t *entry);
 void PanelEntry_SetAllLedsRelaysOff(PanelEntry_t *entry);
-void PanelEntry_SetToggleDoubleState(PanelEntry_t *entry, uint8_t state);
-void PanelEntry_SetToggleRadioState(PanelEntry_t *entry, uint8_t state);
+void PanelEntry_SetToggleDoubleState(PanelEntry_t *entry, const uint8_t state);
+void PanelEntry_SetToggleRadioState(PanelEntry_t *entry, const uint8_t state);
 
 // PanelEntries public API
-void PanelEntries_SetEnabled(PanelEntry_t *entries, uint8_t entry_count, uint8_t state);
+void PanelEntries_SetEnabled(PanelEntry_t *entries, const uint8_t entry_count, const uint8_t state);
 
 #endif  // PLIB_ENTRY_PANEL_H

@@ -68,7 +68,7 @@ typedef struct {
 
 typedef struct {
     const PanelSM_Transition_t *transitions;
-    uint8_t numTransitions;
+    const uint8_t numTransitions;
     PanelSM_ActionFunc action;
 }PanelSM_State_t;
 
@@ -81,11 +81,11 @@ typedef struct {
 
 // Public API
 void PanelSM_Init(PanelStateMachine_t *sm);
-void PanelSM_InitList(PanelStateMachine_t *sm, uint8_t count, const PanelHW_t *hw);
+void PanelSM_InitList(PanelStateMachine_t *sm, const uint8_t count, const PanelHW_t *hw);
 void PanelSM_Run(PanelStateMachine_t *sm);
-void PanelSM_RunList(PanelStateMachine_t *sm, uint8_t count);
-void PanelSM_SetState(PanelStateMachine_t *sm, uint8_t state);
-void PanelSM_SetAllEnable(PanelStateMachine_t *sm, uint8_t count, uint8_t state);
+void PanelSM_RunList(PanelStateMachine_t *sm, const uint8_t count);
+void PanelSM_SetState(PanelStateMachine_t *sm, const uint8_t state);
+void PanelSM_SetAllEnable(PanelStateMachine_t *sm, const uint8_t count, const uint8_t state);
 
 // Condition functions
 uint8_t PanelSM_Cond_None(PanelEntry_t *entry);
