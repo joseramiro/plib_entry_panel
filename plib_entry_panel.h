@@ -52,9 +52,9 @@ typedef struct PanelEntry
 void PanelEntry_SetHW(PanelEntry_t *entry, const PanelHW_t *hw);
 void PanelEntry_SetValidation(PanelEntry_t *entry, uint8_t state);
 void PanelEntry_StartPulse(PanelEntry_t *entry);
-uint8_t PanelEntry_GetValidation(PanelEntry_t *entry);
+uint8_t PanelEntry_GetValidation(const PanelEntry_t *entry);
 void PanelEntry_SetEnabled(PanelEntry_t *entry, uint8_t state);
-uint8_t PanelEntry_GetEnabled(PanelEntry_t *entry);
+uint8_t PanelEntry_GetEnabled(const PanelEntry_t *entry);
 void PanelEntry_SetAllLedsRelaysOn(PanelEntry_t *entry);
 void PanelEntry_SetAllLedsRelaysOff(PanelEntry_t *entry);
 void PanelEntry_SetToggleDoubleState(PanelEntry_t *entry, uint8_t state);
