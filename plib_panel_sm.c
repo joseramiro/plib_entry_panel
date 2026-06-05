@@ -40,6 +40,7 @@ void PanelSM_Init(PanelStateMachine_t *sm)
             break;
     
         default:
+            sm->states = NULL;
             break;
     }
     sm->currentState = 0;
@@ -48,6 +49,8 @@ void PanelSM_Init(PanelStateMachine_t *sm)
 
 void PanelSM_InitList(PanelStateMachine_t *sm, uint8_t count, const PanelHW_t *hw)
 {
+    if(!hw) return;
+
     for(uint8_t i = 0; i < count; i++)
     {
         PanelEntry_SetHW(&sm[i].entry, hw);
@@ -57,15 +60,14 @@ void PanelSM_InitList(PanelStateMachine_t *sm, uint8_t count, const PanelHW_t *h
 
 void PanelSM_Run(PanelStateMachine_t *sm)
 {
+    if(!sm->states) return;
+
     const PanelSM_State_t *s = &sm->states[sm->currentState];
 
-    if(sm->entryFlag)
+    if(sm->entryFlag && s->action)
     {
-        if(s->action)
-        {
-            s->action(&sm->entry);
-            sm->entryFlag = 0;
-        }
+        s->action(&sm->entry);
+        sm->entryFlag = 0;
     }
     for (uint8_t i = 0; i < s->numTransitions; i++)
     {
@@ -113,40 +115,42 @@ uint8_t PanelSM_Cond_isValidated(PanelEntry_t *entry)
 
 uint8_t PanelSM_Cond_isButton0Pressed(PanelEntry_t *entry)
 {
-    if(entry->buttons)
+    if(entry->hw && entry->hw->get_button_pressed_flag && entry->buttons && entry->button_count > 0)
         return(entry->hw->get_button_pressed_flag(entry->buttons[0]));
     return 0;
 }
 
 uint8_t PanelSM_Cond_isButton1Pressed(PanelEntry_t *entry)
 {
-    if(entry->buttons)
+    if(entry->hw && entry->hw->get_button_pressed_flag && entry->buttons && entry->button_count > 1)
         return(entry->hw->get_button_pressed_flag(entry->buttons[1]));
     return 0;
 }
 
 uint8_t PanelSM_Cond_isButton2Pressed(PanelEntry_t *entry)
 {
-    if(entry->buttons)
+    if(entry->hw && entry->hw->get_button_pressed_flag && entry->buttons && entry->button_count > 2)
         return(entry->hw->get_button_pressed_flag(entry->buttons[2]));
     return 0;
 }
 
 uint8_t PanelSM_Cond_isButton3Pressed(PanelEntry_t *entry)
 {
-    if(entry->buttons)
+    if(entry->hw && entry->hw->get_button_pressed_flag && entry->buttons && entry->button_count > 3)
         return(entry->hw->get_button_pressed_flag(entry->buttons[3]));
     return 0;
 }
 
 uint8_t PanelSM_Cond_isButton0Released(PanelEntry_t *entry)
 {
-    if(entry->buttons)
+    if(entry->hw && entry->hw->get_button_released_flag && entry->buttons && entry->button_count > 0)
         return(entry->hw->get_button_released_flag(entry->buttons[0]));
     return 0;
 }
 
 uint8_t PanelSM_Cond_isTimerFinished(PanelEntry_t *entry)
 {
-    return(entry->hw->timer_finished(entry->timer_id));
+    if(entry->hw && entry->hw->timer_finished)
+        return(entry->hw->timer_finished(entry->timer_id));
+    return 0;
 }
