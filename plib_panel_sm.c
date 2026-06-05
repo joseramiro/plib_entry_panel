@@ -38,6 +38,10 @@ void PanelSM_Init(PanelStateMachine_t *sm)
         case PANEL_SM_TYPE_RADIO4:
             sm->states = PanelSM_Radio4_GetTable();
             break;
+        
+        case PANEL_SM_TYPE_RADIO7:
+            sm->states = PanelSM_Radio7_GetTable();
+            break;
     
         default:
             sm->states = NULL;
@@ -138,6 +142,27 @@ uint8_t PanelSM_Cond_isButton3Pressed(PanelEntry_t *entry)
 {
     if(entry->hw && entry->hw->get_button_pressed_flag && entry->buttons && entry->button_count > 3)
         return(entry->hw->get_button_pressed_flag(entry->buttons[3]));
+    return 0;
+}
+
+uint8_t PanelSM_Cond_isButton4Pressed(PanelEntry_t *entry)
+{
+    if(entry->hw && entry->hw->get_button_pressed_flag && entry->buttons && entry->button_count > 4)
+        return(entry->hw->get_button_pressed_flag(entry->buttons[4]));
+    return 0;
+}
+
+uint8_t PanelSM_Cond_isButton5Pressed(PanelEntry_t *entry)
+{
+    if(entry->hw && entry->hw->get_button_pressed_flag && entry->buttons && entry->button_count > 5)
+        return(entry->hw->get_button_pressed_flag(entry->buttons[5]));
+    return 0;
+}
+
+uint8_t PanelSM_Cond_isButton6Pressed(PanelEntry_t *entry)
+{
+    if(entry->hw && entry->hw->get_button_pressed_flag && entry->buttons && entry->button_count > 6)
+        return(entry->hw->get_button_pressed_flag(entry->buttons[6]));
     return 0;
 }
 

@@ -11,7 +11,8 @@ typedef enum
     PANEL_SM_TYPE_TOGGLE1,
     PANEL_SM_TYPE_TOGGLE2,
     PANEL_SM_TYPE_RADIO3,
-    PANEL_SM_TYPE_RADIO4
+    PANEL_SM_TYPE_RADIO4,
+    PANEL_SM_TYPE_RADIO7
 }PanelSMType_t;
 
 typedef enum
@@ -55,7 +56,10 @@ typedef enum
     PANEL_SM_RADIO_OPTION0,
     PANEL_SM_RADIO_OPTION1,
     PANEL_SM_RADIO_OPTION2,
-    PANEL_SM_RADIO_OPTION3
+    PANEL_SM_RADIO_OPTION3,
+    PANEL_SM_RADIO_OPTION4,
+    PANEL_SM_RADIO_OPTION5,
+    PANEL_SM_RADIO_OPTION6
 }PanelSMRadio_t;
 
 typedef uint8_t (*PanelSM_CondFunc)(PanelEntry_t *entry);
@@ -94,6 +98,9 @@ uint8_t PanelSM_Cond_isButton0Pressed(PanelEntry_t *entry);
 uint8_t PanelSM_Cond_isButton1Pressed(PanelEntry_t *entry);
 uint8_t PanelSM_Cond_isButton2Pressed(PanelEntry_t *entry);
 uint8_t PanelSM_Cond_isButton3Pressed(PanelEntry_t *entry);
+uint8_t PanelSM_Cond_isButton4Pressed(PanelEntry_t *entry);
+uint8_t PanelSM_Cond_isButton5Pressed(PanelEntry_t *entry);
+uint8_t PanelSM_Cond_isButton6Pressed(PanelEntry_t *entry);
 uint8_t PanelSM_Cond_isButton0Released(PanelEntry_t *entry);
 uint8_t PanelSM_Cond_isTimerFinished(PanelEntry_t *entry);
 
