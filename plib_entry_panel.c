@@ -7,7 +7,7 @@
  */
 
 #include "plib_entry_panel.h"
-#include "libs/common_c_libs/plib_data_struct.h"
+#include "libs/plib_data_struct/plib_data_struct.h"
 
 // Static gpio functions
 static void PanelEntry_WriteLed(const PanelEntry_t *entry, const uint16_t led, uint8_t value);
